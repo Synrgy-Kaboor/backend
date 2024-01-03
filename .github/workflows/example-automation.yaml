@@ -2,7 +2,7 @@ name: Example Automation
 on: [push]
 
 jobs:
-  run-shell-commands:
+  kaboor-cicd-automation:
     run-on: ubuntu-latest
     steps:
       - name: echo a string
