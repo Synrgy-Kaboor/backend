@@ -1,5 +1,6 @@
 package com.synrgy.kaboor.backend.dto.response;
 
+import com.synrgy.kaboor.backend.model.Role;
 import lombok.*;
 
 @Setter
@@ -11,5 +12,7 @@ import lombok.*;
 public class LoginDtoResponse {
 
     private String jwt;
+
+    private Role role;
 
 }

@@ -4,11 +4,11 @@ import lombok.*;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString
-public class RegisterUserDtoResponse {
+public class OtpDtoResponse {
 
     private String phoneNumber;
 
@@ -17,7 +17,5 @@ public class RegisterUserDtoResponse {
     private String fullName;
 
     private boolean verified;
-
-    private long nextFiveMinutesOnSeconds;
 
 }

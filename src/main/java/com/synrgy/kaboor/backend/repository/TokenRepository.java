@@ -15,7 +15,7 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
         INNER JOIN User u ON t.user.id = u.id
         WHERE u.id = :userId AND t.expired = FALSE 
     """)
-    List<Token> findAllByUser(UUID userId);
+    List<Token> findAllByUser(Long userId);
 
     Optional<Token> findByToken(String token);
 
