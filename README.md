@@ -1,3 +1,3 @@
 # Kaboor Back-End
 
-## STAGING ENVIRONMENT
+## DEV ENVIRONMENT
