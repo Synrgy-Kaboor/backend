@@ -10,4 +10,6 @@ public class MessageResponse {
 
     public static String RESEND_OTP_SUCCESSFULLY = "Re-send OTP successfully";
 
+    public static String CHANGE_PASSWORD_SUCCESSFULLY = "Change password successfully";
+
 }

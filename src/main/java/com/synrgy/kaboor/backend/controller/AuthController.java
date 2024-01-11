@@ -1,14 +1,12 @@
 package com.synrgy.kaboor.backend.controller;
 
-import com.synrgy.kaboor.backend.dto.request.LoginDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.OtpDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.RegisterUserDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.ResendRequestDto;
+import com.synrgy.kaboor.backend.dto.request.*;
 import com.synrgy.kaboor.backend.dto.response.LoginDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.OtpDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.RegisterUserDtoResponse;
 import com.synrgy.kaboor.backend.service.AuthService;
 import com.synrgy.kaboor.backend.util.BaseResponse;
+import com.synrgy.kaboor.backend.util.BaseResponseWithoutData;
 import com.synrgy.kaboor.backend.util.ResponseUtility;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,6 +87,18 @@ public class AuthController {
         authService.resendOtp(resendRequestDto);
         BaseResponse<Map<String, Object>> response = ResponseUtility.getBaseResponse(HttpStatus.OK.value(), RESEND_OTP_SUCCESSFULLY, null);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Change password")
+    @PostMapping("/password/change")
+    public ResponseEntity<BaseResponseWithoutData> changePassword(@Valid @RequestBody ChangePasswordRequestDto request) {
+        // TODO: Check if OTP that verified before was for change password
+        authService.changePassword(request);
+        BaseResponseWithoutData response = BaseResponseWithoutData.builder()
+                .code(HttpStatus.OK.value())
+                .message(CHANGE_PASSWORD_SUCCESSFULLY)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
 }

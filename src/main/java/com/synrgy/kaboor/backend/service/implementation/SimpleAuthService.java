@@ -1,9 +1,6 @@
 package com.synrgy.kaboor.backend.service.implementation;
 
-import com.synrgy.kaboor.backend.dto.request.LoginDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.OtpDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.RegisterUserDtoRequest;
-import com.synrgy.kaboor.backend.dto.request.ResendRequestDto;
+import com.synrgy.kaboor.backend.dto.request.*;
 import com.synrgy.kaboor.backend.dto.response.LoginDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.OtpDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.RegisterUserDtoResponse;
@@ -172,6 +169,19 @@ public class SimpleAuthService implements AuthService {
         // Update OTP and OTP deadline on User table
         user.setOtp(otp);
         user.setVerifyDeadlines(getNextFiveMinutesOnSeconds());
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
+        // TODO: Check if OTP that verified before was for change password
+
+        // Find user by email
+        User user = userRepository.findByEmail(changePasswordRequestDto.getEmail())
+                .orElseThrow(() -> new RuntimeException("User with email " + changePasswordRequestDto.getEmail() + " not found!"));
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(changePasswordRequestDto.getNewPassword()));
         userRepository.save(user);
     }
 
