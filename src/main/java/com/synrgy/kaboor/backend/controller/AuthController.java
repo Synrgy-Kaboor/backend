@@ -1,6 +1,7 @@
 package com.synrgy.kaboor.backend.controller;
 
 import com.synrgy.kaboor.backend.dto.request.*;
+import com.synrgy.kaboor.backend.dto.response.ForgetPasswordDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.LoginDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.OtpDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.RegisterUserDtoResponse;
@@ -83,16 +84,43 @@ public class AuthController {
 
     @Operation(summary = "Re-send OTP")
     @PostMapping("/otp/resend")
-    public ResponseEntity<BaseResponse<Map<String, Object>>> resendOtp(@Valid @RequestBody ResendRequestDto resendRequestDto) {
-        authService.resendOtp(resendRequestDto);
+    public ResponseEntity<BaseResponse<Map<String, Object>>> resendOtp(@Valid @RequestBody ResendDtoRequest resendDtoRequest) {
+        authService.resendOtp(resendDtoRequest);
         BaseResponse<Map<String, Object>> response = ResponseUtility.getBaseResponse(HttpStatus.OK.value(), RESEND_OTP_SUCCESSFULLY, null);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(summary = "Request for forget password")
+    @PostMapping("/password/forget")
+    public ResponseEntity<BaseResponse<Map<String, Object>>> forgetPassword(@Valid @RequestBody ForgetPasswordDtoRequest forgetPasswordDtoRequest) {
+        ForgetPasswordDtoResponse data = authService.forgetPassword(forgetPasswordDtoRequest);
+
+        dataMap.clear();
+        dataMap.put("forgetPassword", data);
+
+        BaseResponse<Map<String, Object>> response = ResponseUtility.getBaseResponse(HttpStatus.OK.value(), REQUEST_FORGET_PASSWORD, dataMap);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Verify request for change password")
+    @PostMapping("/password/otp/verify")
+    public ResponseEntity<BaseResponseWithoutData> verifyRequestChangePassword(
+            @Valid @RequestBody VerifyRequestChangePasswordDtoRequest request
+    ) {
+        authService.verifyRequestChangePassword(request);
+        BaseResponseWithoutData response = BaseResponseWithoutData.builder()
+                .code(HttpStatus.OK.value())
+                .message(REQUEST_FORGET_PASSWORD_IS_VERIFIED)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    // TODO: Re-send forget password OTP again
+
     @Operation(summary = "Change password")
     @PostMapping("/password/change")
-    public ResponseEntity<BaseResponseWithoutData> changePassword(@Valid @RequestBody ChangePasswordRequestDto request) {
-        // TODO: Check if OTP that verified before was for change password
+    public ResponseEntity<BaseResponseWithoutData> changePassword(@Valid @RequestBody ChangePasswordDtoRequest request) {
         authService.changePassword(request);
         BaseResponseWithoutData response = BaseResponseWithoutData.builder()
                 .code(HttpStatus.OK.value())

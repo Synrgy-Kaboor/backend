@@ -12,4 +12,8 @@ public class MessageResponse {
 
     public static String CHANGE_PASSWORD_SUCCESSFULLY = "Change password successfully";
 
+    public static String REQUEST_FORGET_PASSWORD = "Request forget password successfully, please check your email for OTP verification";
+
+    public static String REQUEST_FORGET_PASSWORD_IS_VERIFIED = "Request forget password is verified";
+
 }

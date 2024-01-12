@@ -1,6 +1,7 @@
 package com.synrgy.kaboor.backend.service;
 
 import com.synrgy.kaboor.backend.dto.request.*;
+import com.synrgy.kaboor.backend.dto.response.ForgetPasswordDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.LoginDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.OtpDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.RegisterUserDtoResponse;
@@ -13,8 +14,12 @@ public interface AuthService {
 
     LoginDtoResponse login(LoginDtoRequest loginDtoRequest);
 
-    void resendOtp(ResendRequestDto resendRequestDto);
+    void resendOtp(ResendDtoRequest resendDtoRequest);
 
-    void changePassword(ChangePasswordRequestDto changePasswordRequestDto);
+    void changePassword(ChangePasswordDtoRequest changePasswordDtoRequest);
+
+    ForgetPasswordDtoResponse forgetPassword(ForgetPasswordDtoRequest forgetPasswordDtoRequest);
+
+    void verifyRequestChangePassword(VerifyRequestChangePasswordDtoRequest request);
 
 }

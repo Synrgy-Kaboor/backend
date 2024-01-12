@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class ResendRequestDto {
+public class ResendDtoRequest {
 
     private String email;
 
