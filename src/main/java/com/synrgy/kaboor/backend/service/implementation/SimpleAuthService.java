@@ -1,6 +1,7 @@
 package com.synrgy.kaboor.backend.service.implementation;
 
 import com.synrgy.kaboor.backend.dto.request.*;
+import com.synrgy.kaboor.backend.dto.response.ForgetPasswordDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.LoginDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.OtpDtoResponse;
 import com.synrgy.kaboor.backend.dto.response.RegisterUserDtoResponse;
@@ -127,6 +128,10 @@ public class SimpleAuthService implements AuthService {
                 )
         );
 
+        // Set possibility of request for change password is verified (via OTP), but not change it
+        user.setRequestForChangePasswordVerified(false);
+        userRepository.save(user);
+
         // Generate JWT
         String jwt = jwtService.generateToken(user);
 
@@ -152,10 +157,10 @@ public class SimpleAuthService implements AuthService {
     }
 
     @Override
-    public void resendOtp(ResendRequestDto resendRequestDto) {
+    public void resendOtp(ResendDtoRequest resendDtoRequest) {
         // Find user by email
-        User user = userRepository.findByEmail(resendRequestDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User with email " + resendRequestDto.getEmail() + " not found!"));
+        User user = userRepository.findByEmail(resendDtoRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User with email " + resendDtoRequest.getEmail() + " not found!"));
 
         // Check whether the user has just sent the previous OTP
         // Prevent spam
@@ -170,18 +175,63 @@ public class SimpleAuthService implements AuthService {
         user.setOtp(otp);
         user.setVerifyDeadlines(getNextFiveMinutesOnSeconds());
         userRepository.save(user);
+
+        // TODO: Response
     }
 
     @Override
-    public void changePassword(ChangePasswordRequestDto changePasswordRequestDto) {
-        // TODO: Check if OTP that verified before was for change password
-
+    public void changePassword(ChangePasswordDtoRequest changePasswordDtoRequest) {
         // Find user by email
-        User user = userRepository.findByEmail(changePasswordRequestDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User with email " + changePasswordRequestDto.getEmail() + " not found!"));
+        User user = userRepository.findByEmail(changePasswordDtoRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User with email " + changePasswordDtoRequest.getEmail() + " not found!"));
 
-        // Update password
-        user.setPassword(passwordEncoder.encode(changePasswordRequestDto.getNewPassword()));
+        if (!user.isRequestForChangePasswordVerified()) {
+            throw new RuntimeException("User request for change password is not verified!");
+        }
+
+        // Update password and request for change password verified
+        user.setPassword(passwordEncoder.encode(changePasswordDtoRequest.getNewPassword()));
+        user.setRequestForChangePasswordVerified(false);
+        userRepository.save(user);
+    }
+
+    @Override
+    public ForgetPasswordDtoResponse forgetPassword(ForgetPasswordDtoRequest forgetPasswordDtoRequest) {
+        // Find user by email
+        User user = userRepository.findByEmail(forgetPasswordDtoRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User with email" + forgetPasswordDtoRequest.getEmail() + " not found!"));
+
+        // Check whether the user has just sent the previous OTP
+        // Prevent spam
+        if (getCurrentSeconds() - user.getForgetPasswordVerifyDeadlines() < 300) {
+            throw new RuntimeException("New OTP just sent to email " + user.getEmail() + ", please check it first!");
+        }
+
+        String otp = generateOtp();
+        sendVerificationEmailForForgetPassword(forgetPasswordDtoRequest.getEmail(), otp);
+
+        user.setRequestForChangePasswordOtp(otp);
+        user.setForgetPasswordVerifyDeadlines(getNextFiveMinutesOnSeconds());
+        User updatedUser = userRepository.save(user);
+
+        return ForgetPasswordDtoResponse.builder()
+                .nextFiveMinutesOnSeconds(updatedUser.getForgetPasswordVerifyDeadlines())
+                .requestForChangePasswordVerified(updatedUser.isRequestForChangePasswordVerified())
+                .build();
+    }
+
+    @Override
+    public void verifyRequestChangePassword(VerifyRequestChangePasswordDtoRequest request) {
+        // Find User by OTP
+        User user = userRepository.findByOtp(request.getOtp())
+                .orElseThrow(() -> new RuntimeException("OTP not valid for any users!"));
+
+        // Check OTP expired condition
+        if (getCurrentSeconds() - user.getForgetPasswordVerifyDeadlines() >= 300) {
+            throw new RuntimeException("OTP has expired!");
+        }
+
+        user.setRequestForChangePasswordVerified(true);
         userRepository.save(user);
     }
 
@@ -211,6 +261,12 @@ public class SimpleAuthService implements AuthService {
 
     private void sendVerificationEmail(String emailTo, String otp) {
         String subject = "Kaboor Email Verification";
+        String body = "Your verification OTP: " + otp;
+        sendEmail(emailTo, subject, body);
+    }
+
+    private void sendVerificationEmailForForgetPassword(String emailTo, String otp) {
+        String subject = "Kaboor Email Verification (Change Password)";
         String body = "Your verification OTP: " + otp;
         sendEmail(emailTo, subject, body);
     }

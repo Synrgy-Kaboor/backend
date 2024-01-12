@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class ChangePasswordRequestDto {
+public class ChangePasswordDtoRequest {
 
     @NotNull
     @NotEmpty
