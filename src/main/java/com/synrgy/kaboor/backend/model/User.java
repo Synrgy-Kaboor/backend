@@ -48,6 +48,13 @@ public class User implements UserDetails {
 
     private long verifyDeadlines;
 
+    private String requestForChangePasswordOtp;
+
+    @Column(columnDefinition = "BOOLEAN DEFAULT false")
+    private boolean requestForChangePasswordVerified;
+
+    private long forgetPasswordVerifyDeadlines;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
