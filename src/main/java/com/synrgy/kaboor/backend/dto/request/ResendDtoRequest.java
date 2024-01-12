@@ -1,5 +1,7 @@
 package com.synrgy.kaboor.backend.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -10,6 +12,8 @@ import lombok.*;
 @ToString
 public class ResendDtoRequest {
 
+    @NotNull
+    @NotEmpty
     private String email;
 
 }
