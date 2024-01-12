@@ -129,6 +129,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // TODO: Login with Google
+    // TODO: Sign-up and Sign-in with Google
 
 }

@@ -91,7 +91,8 @@ public class SimpleAuthService implements AuthService {
                 .orElseThrow(() -> new RuntimeException("OTP not valid for any users!"));
 
         // Compare OTP deadlines with current time
-        if (getCurrentSeconds() - user.getVerifyDeadlines() >= 300) {
+        log.info("Time difference [{}]", user.getVerifyDeadlines() - getCurrentSeconds());
+        if (user.getVerifyDeadlines() - getCurrentSeconds() <= 0) {
             throw new RuntimeException("OTP has expired!");
         }
 
@@ -164,7 +165,7 @@ public class SimpleAuthService implements AuthService {
 
         // Check whether the user has just sent the previous OTP
         // Prevent spam
-        if (getCurrentSeconds() - user.getVerifyDeadlines() < 300) {
+        if (user.getVerifyDeadlines() - getCurrentSeconds() > 0) {
             throw new RuntimeException("New OTP just sent to email " + user.getEmail() + ", please check it first!");
         }
 
@@ -203,7 +204,7 @@ public class SimpleAuthService implements AuthService {
 
         // Check whether the user has just sent the previous OTP
         // Prevent spam
-        if (getCurrentSeconds() - user.getForgetPasswordVerifyDeadlines() < 300) {
+        if (user.getForgetPasswordVerifyDeadlines() - getCurrentSeconds() > 0) {
             throw new RuntimeException("New OTP just sent to email " + user.getEmail() + ", please check it first!");
         }
 
@@ -227,7 +228,7 @@ public class SimpleAuthService implements AuthService {
                 .orElseThrow(() -> new RuntimeException("OTP not valid for any users!"));
 
         // Check OTP expired condition
-        if (getCurrentSeconds() - user.getForgetPasswordVerifyDeadlines() >= 300) {
+        if (getCurrentSeconds() - user.getForgetPasswordVerifyDeadlines() <= 0) {
             throw new RuntimeException("OTP has expired!");
         }
 
