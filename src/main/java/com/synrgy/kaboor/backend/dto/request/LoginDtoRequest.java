@@ -1,5 +1,7 @@
 package com.synrgy.kaboor.backend.dto.request;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Setter
@@ -10,8 +12,12 @@ import lombok.*;
 @ToString
 public class LoginDtoRequest {
 
+    @NotNull
+    @NotEmpty
     private String email;
 
+    @NotNull
+    @NotEmpty
     private String password;
 
 }
