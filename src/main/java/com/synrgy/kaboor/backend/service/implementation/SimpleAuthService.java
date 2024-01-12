@@ -84,6 +84,7 @@ public class SimpleAuthService implements AuthService {
     @Override
     public OtpDtoResponse verifyOtp(OtpDtoRequest otpDtoRequest) {
         // TODO: Handle exceptions
+        //
 
         // Find OTP from User table
         User user = userRepository.findByOtp(otpDtoRequest.getOtp())
