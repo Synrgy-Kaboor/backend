@@ -37,6 +37,18 @@ public class AuthController {
 
     private final Map<String, Object> dataMap = new HashMap<>();
 
+    @Operation(summary = "Check if email exist on DB or not")
+    @PostMapping("/check/email")
+    public ResponseEntity<BaseResponseWithoutData> checkEmail(@Valid @RequestBody CheckEmailDtoRequest request) {
+        authService.checkEmail(request);
+        BaseResponseWithoutData response = BaseResponseWithoutData.builder()
+                .code(HttpStatus.OK.value())
+                .message(EMAIL_IS_AVAILABLE_FOR_REGISTER_NEW_USER)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     @Operation(summary = "Register as user (customer)")
     @PostMapping("/register/user")
     public ResponseEntity<BaseResponse<Map<String, Object>>> registerAsUser(@Valid @RequestBody RegisterUserDtoRequest request) {

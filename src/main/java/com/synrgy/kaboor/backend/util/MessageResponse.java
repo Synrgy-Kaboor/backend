@@ -16,4 +16,6 @@ public class MessageResponse {
 
     public static String REQUEST_FORGET_PASSWORD_IS_VERIFIED = "Request forget password is verified";
 
+    public static String EMAIL_IS_AVAILABLE_FOR_REGISTER_NEW_USER = "Email is available for new user";
+
 }
