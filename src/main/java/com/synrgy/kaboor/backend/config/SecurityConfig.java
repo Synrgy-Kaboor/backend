@@ -44,7 +44,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://kaboor-dev.netlify.app/"
+                "https://kaboor-dev.netlify.app",
+                "https://kaboor-api-dev.up.railway.app"
         ));
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE"
