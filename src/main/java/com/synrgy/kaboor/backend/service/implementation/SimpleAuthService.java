@@ -133,6 +133,9 @@ public class SimpleAuthService implements AuthService {
         user.setRequestForChangePasswordVerified(false);
         userRepository.save(user);
 
+        // Revoke all existing user tokens from DB
+        revokeAllUserTokens(user);
+
         // Generate JWT
         String jwt = jwtService.generateToken(user);
 
@@ -142,11 +145,6 @@ public class SimpleAuthService implements AuthService {
                 .tokenType(TokenType.BEARER)
                 .expired(false)
                 .build();
-
-        tokenRepository.save(token);
-
-        // Revoke all existing user tokens from DB
-        revokeAllUserTokens(user);
 
         // Save new token to DB
         tokenRepository.save(token);
