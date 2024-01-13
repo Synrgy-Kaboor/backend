@@ -269,7 +269,7 @@ public class SimpleAuthService implements AuthService {
 
     private String generateOtp() {
         Random random = new Random();
-        int otp = 100000 + random.nextInt(900000);
+        int otp = 1000 + random.nextInt(9000);
         return String.valueOf(otp);
     }
 
