@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -221,7 +222,7 @@ public class SimpleAuthService implements AuthService {
 
     @Override
     public void verifyRequestChangePassword(VerifyRequestChangePasswordDtoRequest request) {
-        // Find User by OTP
+        // Find user by OTP
         User user = userRepository.findByOtp(request.getOtp())
                 .orElseThrow(() -> new RuntimeException("OTP not valid for any users!"));
 
@@ -232,6 +233,20 @@ public class SimpleAuthService implements AuthService {
 
         user.setRequestForChangePasswordVerified(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public void checkEmail(CheckEmailDtoRequest request) {
+        // Find user by email optional
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.isVerified()) {
+                throw new RuntimeException("Email was registered, please use another email!");
+            } else {
+                throw new RuntimeException("Email was registered, but not verified!");
+            }
+        }
     }
 
     private void revokeAllUserTokens(User user) {
