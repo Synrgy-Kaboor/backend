@@ -22,4 +22,6 @@ public interface AuthService {
 
     void verifyRequestChangePassword(VerifyRequestChangePasswordDtoRequest request);
 
+    void checkEmail(CheckEmailDtoRequest request);
+
 }
