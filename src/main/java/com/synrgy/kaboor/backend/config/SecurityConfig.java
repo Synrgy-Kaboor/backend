@@ -1,6 +1,7 @@
 package com.synrgy.kaboor.backend.config;
 
 import com.synrgy.kaboor.backend.repository.UserRepository;
+import com.synrgy.kaboor.backend.security.JwtAuthEntryPoint;
 import com.synrgy.kaboor.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,8 @@ public class SecurityConfig {
 
     private final LogoutHandler logoutHandler;
 
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -44,6 +47,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
                 .logout(logout -> logout
                         .logoutUrl("/api/v1/auth/logout")
                         .addLogoutHandler(logoutHandler)
